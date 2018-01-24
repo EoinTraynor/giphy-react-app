@@ -15,8 +15,8 @@ class GIFS extends Component {
     // if no offset passed, default to 0
     getGIFs = (offset = 0) => {
         // if requesting the max offset limit needs to be set at 24 (can't request 5000)
-        const limit = offset===4975 ? 24 : 25;                 
-        const apiKey = '1tQ9inqGiCCsNyfT0ZHL8mIXOevSFG1X';
+        const limit = offset===4975 ? 24 : 25;                         
+        const apiKey = process.env.REACT_APP_API_KEY;        
         axios({
             method: 'get',
             url: 'http://api.giphy.com/v1/gifs/search',
@@ -32,8 +32,7 @@ class GIFS extends Component {
             this.setState({
                 gifs: response.data.data,
                 pagination: response.data.pagination
-            });
-            console.log(response.data);
+            });            
         })
         .catch(err => console.log(err));
     }
@@ -61,22 +60,25 @@ class GIFS extends Component {
                 </div>
             )
         });
+        // pagination navigation
+        const pagination = <ReactPaginate 
+            pageCount={numOfPages}
+            pageRangeDisplayed={5}
+            marginPagesDisplayed={1}
+            previousLabel={"pervious"}
+            nextLabel={"next"}                
+            onPageChange={this.handlePageClick}
+            containerClassName={"pagination"}
+            subContainerClassName={"pages pagination"}
+            activeClassName={"active"}
+        />;
+
         return(
             <div className="gifs">
                 <h1>Dog GIFs</h1>
-                <p>Number of pages: {this.state.numOfPages}</p>
+                <p>Number of pages: {numOfPages}</p>
+                {pagination}
                 {gifs}
-                <ReactPaginate 
-                    pageCount={numOfPages}
-                    pageRangeDisplayed={5}
-                    marginPagesDisplayed={1}
-                    previousLabel={"pervious"}
-                    nextLabel={"next"}                
-                    onPageChange={this.handlePageClick}
-                    containerClassName={"pagination"}
-                    subContainerClassName={"pages pagination"}
-                    activeClassName={"active"}
-                />
             </div>
         )
     }
@@ -87,8 +89,7 @@ class GIFS extends Component {
     
     componentDidUpdate() {        
         // move to the top of the page
-        window.scrollTo(0, 0);        
-        document.getElementsByClassName('break')[0].style.display="none";
+        window.scrollTo(0, 0);                        
     }
 }
 
